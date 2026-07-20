@@ -41,7 +41,7 @@ export const register = async (req,res) =>{
 }
 
 export const login = async (req,res) =>{
-    Const.
+    Constant
         username, 
         password
     } = req.body
