@@ -41,5 +41,56 @@ export const register = async (req,res) =>{
 }
 
 export const login = async (req,res) =>{
-    res.send('Estoy logueado')
+    const {
+        username, 
+        password
+    } = req.body
+    
+    console.log(req.body)
+
+    try {
+        
+        const userFound = await User.findOne({username})
+        if(!userFound) return res.status(400).json({message: "User not foud"})
+        
+        const isMatch = await bcrypt.compare(password, userFound.password)
+        if(!isMatch) return res.status(400).json("Incorrect Credential")
+        
+        const token = await createAccesToken({id: userFound._id})
+        res.cookie( 'token', token)
+        res.json({
+            id:userFound._id,
+            username: userFound.username,
+            name: userFound.name,
+            lastName: userFound.lastName,
+            phone: userFound.phone
+        })
+    
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+export const logout = (req,res) =>{
+    res.cookie("token", "",{
+        expires: new Date(0)
+    })
+    return res.sendStatus(200)
+}
+
+export const profile = async (req,res) =>{
+    const userFound = await User.findById(req.user.id)
+
+    if(!userFound) res.status(400).json({message: "User not found"})
+
+    res.json({
+        id:userFound._id,
+        username: userFound.username,
+        name: userFound.name,
+        lastName: userFound.lastName,
+        phone: userFound.phone,
+        createdAt: userFound.createdAt,
+        updateAt: userFound.updateAt
+    })
+    res.send('Profile')
 }
