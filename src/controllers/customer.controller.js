@@ -31,7 +31,7 @@ export const createCustomer = async (req,res) =>{
             description
         }) 
 
-        const customerSave = await newCustomer.Save()
+        const customerSave = await newCustomer.save()
         res.json(customerSave)
     } catch (error) {
          res.status(500).json({message:error.message})
