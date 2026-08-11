@@ -7,8 +7,7 @@ export const validateSchema = (schema) => (req, res, next) => {
     } catch (error) {
         console.log("Error de Zod:", error);
 
-        return res.status(400).json({
-            error: error.issues.map((issue) => issue.message)
-        });
+        return res.status(400).json(error.issues.map((issue) => issue.message)
+        );
     }
 };
