@@ -32,7 +32,7 @@ function RegisterPage() {
           </h1>
 
           <p className="mt-2 text-sm text-[var(--color-principal)]/60">
-            Regístrate para comenzar
+            Ingresa los datos del nuevo Barbero.
           </p>
         </div>
 

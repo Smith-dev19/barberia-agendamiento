@@ -1,12 +1,12 @@
-import { createContext, useState, useContext } from "react";
-import { registerRequest } from "../api/auth";
+import { createContext, useState, useContext, useEffect } from 'react';
+import { registerRequest, loginResquest } from '../api/auth';
 
 export const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
@@ -14,7 +14,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAthenticated] = useState(false);
-  const [errors, setErrors] = useState([ ])
+  const [errors, setErrors] = useState([]);
 
   const signup = async (user) => {
     try {
@@ -23,17 +23,39 @@ export const AuthProvider = ({ children }) => {
       setUser(res.data);
       setIsAthenticated(true);
     } catch (error) {
-      console.log(error.response.data)
-      setErrors(error.response.data)
+      console.log(error.response.data);
+      setErrors(error.response.data);
     }
   };
+
+  const signin = async (user) => {
+    try {
+      const res = await loginResquest(user);
+      console.log(res.data);
+      setUser(res.data);
+      setIsAthenticated(true);
+    } catch (error) {
+      console.log(error.response.data);
+      setErrors(error.response.data);
+    }
+  };
+
+  useEffect(() => {
+    if (errors.length > 0) {
+      const timer = setTimeout(() => {
+        setErrors([]);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [errors]);
   return (
     <AuthContext.Provider
       value={{
         signup,
         user,
         isAuthenticated,
-        errors
+        errors,
+        signin,
       }}
     >
       {children}

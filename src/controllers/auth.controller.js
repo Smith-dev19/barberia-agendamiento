@@ -1,7 +1,7 @@
-import User from "../models/user.model.js";
-import bcrypt from "bcrypt";
-import { createAccesToken } from "../libs/jwt.js";
-import { HASH_SALT } from "../config.js";
+import User from '../models/user.model.js';
+import bcrypt from 'bcrypt';
+import { createAccesToken } from '../libs/jwt.js';
+import { HASH_SALT } from '../config.js';
 
 export const register = async (req, res) => {
   const { username, name, lastName, phone, password } = req.body;
@@ -17,11 +17,11 @@ export const register = async (req, res) => {
       const errors = [];
 
       if (findUser.username === username) {
-        errors.push("El usuario ya existe");
+        errors.push('El usuario ya existe');
       }
 
       if (findUser.phone === phone) {
-        errors.push("El telefono ya existe");
+        errors.push('El telefono ya existe');
       }
 
       return res.status(400).json(errors);
@@ -38,7 +38,7 @@ export const register = async (req, res) => {
     });
     const userSaved = await newUser.save();
     const token = await createAccesToken({ id: userSaved._id });
-    res.cookie("token", token);
+    res.cookie('token', token);
     res.json({
       id: userSaved._id,
       username: userSaved.username,
@@ -58,13 +58,13 @@ export const login = async (req, res) => {
 
   try {
     const userFound = await User.findOne({ username });
-    if (!userFound) return res.status(400).json({ message: "User not foud" });
+    if (!userFound) return res.status(400).json(['El Usuario es Invalido']);
 
     const isMatch = await bcrypt.compare(password, userFound.password);
-    if (!isMatch) return res.status(400).json("Incorrect Credential");
+    if (!isMatch) return res.status(400).json(['Credenciales incorrectas']);
 
     const token = await createAccesToken({ id: userFound._id });
-    res.cookie("token", token);
+    res.cookie('token', token);
     res.json({
       id: userFound._id,
       username: userFound.username,
@@ -78,7 +78,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.cookie("token", "", {
+  res.cookie('token', '', {
     expires: new Date(0),
   });
   return res.sendStatus(200);
@@ -87,7 +87,7 @@ export const logout = (req, res) => {
 export const profile = async (req, res) => {
   const userFound = await User.findById(req.user.id);
 
-  if (!userFound) res.status(400).json({ message: "User not found" });
+  if (!userFound) res.status(400).json({ message: 'User not found' });
 
   res.json({
     id: userFound._id,
@@ -98,5 +98,5 @@ export const profile = async (req, res) => {
     createdAt: userFound.createdAt,
     updateAt: userFound.updateAt,
   });
-  res.send("Profile");
+  res.send('Profile');
 };
